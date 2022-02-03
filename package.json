@@ -1,5 +1,5 @@
 {
-  "name": "go-utils",
+  "name": "@go-ui/demo-utils",
   "version": "0.0.1",
   "description": "Utility components for Go UI document site",
   "main": "dist/index.cjs.js",
@@ -12,12 +12,13 @@
   "unpkg": "dist/go-utils/go-utils.esm.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ionic-team/stencil-component-starter.git"
+    "url": "https://github.com/getgoui/go-utils"
   },
   "files": [
     "dist/",
     "loader/"
   ],
+  "homepage": "https://go.components.style/",
   "scripts": {
     "build": "stencil build --docs",
     "start": "stencil build --dev --watch --serve",
@@ -26,14 +27,19 @@
     "generate": "stencil generate"
   },
   "dependencies": {
-    "@go-ui/core": "^0.13.1",
+    "@go-ui/core": "^0.14.0",
     "@stencil/core": "^2.13.0",
     "json5": "^2.2.0"
   },
   "devDependencies": {
+    "@stencil/postcss": "^2.1.0",
+    "@stencil/sass": "^1.5.2",
     "@types/jest": "^27.0.3",
+    "autoprefixer": "^10.4.2",
+    "cssnano": "^5.0.16",
     "jest": "^27.4.5",
     "jest-cli": "^27.4.5",
+    "postcss-pxtorem": "^6.0.0",
     "puppeteer": "^10.0.0"
   },
   "license": "MIT"
