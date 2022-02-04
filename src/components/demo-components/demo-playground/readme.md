@@ -18,6 +18,23 @@
 | `loaded` |             | `CustomEvent<HTMLElement>` |
 
 
+## Dependencies
+
+### Depends on
+
+- go-button
+- go-accordion
+- go-accordion-item
+
+### Graph
+```mermaid
+graph TD;
+  demo-playground --> go-button
+  demo-playground --> go-accordion
+  demo-playground --> go-accordion-item
+  style demo-playground fill:#f9f,stroke:#333,stroke-width:4px
+```
+
 ----------------------------------------------
 
 
