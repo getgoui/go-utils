@@ -5,19 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
     <title>Demo components for Go UI</title>
 
+    <!-- material icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link rel="stylesheet" href="/build/go-utils.css" />
     <script type="module" src="/build/go-utils.esm.js"></script>
     <script nomodule src="/build/go-utils.js"></script>
   </head>
   <body>
     <demo-playground
-      tag="go-button"
+      tag="go-nav-link"
       props="[
-        {name: 'color', type: 'select', value: 'primary', 'options': ['primary','secondary','tertiary','critical']},
-        {name: 'outline', type: 'boolean', value: false},
-      ]"
+  {
+    name: 'item',
+    type: 'object',
+    value: {
+      label: 'Dashboard',
+      url: 'https://seanwuapps.com',
+      icon: 'dashboard',
+      linkAttrs: {
+        target: '_blank'
+      }
+    },
+  },
+  {name: 'showArrow', type: 'boolean', value: false},
+  {name: 'block', type: 'boolean', value: false},
+]"
     >
-      <go-button>Button</go-button>
+      <go-nav-link></go-nav-link>
     </demo-playground>
 
     <dark-mode-toggle></dark-mode-toggle>

@@ -1,5 +1,6 @@
 import { Component, Host, h, Element, Prop, Event, EventEmitter, State, Watch } from '@stencil/core';
 import JSON5 from 'json5';
+import copy from 'copy-text-to-clipboard';
 
 export type PropType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'select' | 'multiselect';
 export interface IProp {
@@ -72,12 +73,11 @@ export class DemoPlayground {
       }
       this.targetEl[name] = value;
     });
-
-    this.log(this.getUsage());
   }
 
   getUsage() {
-    return `<${this.tag} ${this.propsArray
+    const glue = '\n  ';
+    const propOutputs = this.propsArray
       .map(({ name, value, type }) => {
         if (value === 'null' || value === null) {
           return false;
@@ -85,10 +85,26 @@ export class DemoPlayground {
         if (type === 'boolean' && !value) {
           return false;
         }
+        if (type === 'object' || type === 'array') {
+          try {
+            return `${name}="${JSON5.stringify(value, undefined, 2)}"`;
+          } catch (e) {
+            return false;
+          }
+        }
         return `${name}="${value}"`;
       })
-      .filter(Boolean)
-      .join(' ')}></${this.tag}>`;
+      .filter(Boolean);
+    return `<${this.tag}${propOutputs.length ? glue : ''}${propOutputs.join(glue)}${propOutputs.length ? glue : ''}></${this.tag}>`;
+  }
+
+  @State() copied = false;
+  copyUsage() {
+    copy(this.getUsage());
+    this.copied = true;
+    setTimeout(() => {
+      this.copied = false;
+    }, 2000);
   }
 
   /**
@@ -111,10 +127,21 @@ export class DemoPlayground {
     const { name, type } = propObject;
     this.propsArray = this.propsArray
       .map(p => {
-        const newValue = type === 'boolean' ? (e.target as HTMLInputElement).checked : (e.target as HTMLInputElement).value;
+        let newValue = (e.target as HTMLInputElement).value as string | boolean;
+        if (type === 'boolean') {
+          newValue = (e.target as HTMLInputElement).checked;
+        }
+        if (type === 'object') {
+          try {
+            newValue = JSON5.parse((e.target as HTMLInputElement).value);
+          } catch (e) {
+            newValue = null;
+          }
+        }
+
         if (p.name === name) {
           if (newValue === null) {
-            return null;
+            return { ...p, value: null };
           }
           p.value = newValue;
         }
@@ -132,11 +159,12 @@ export class DemoPlayground {
     if (['object', 'array'].includes(type)) {
       return (
         <div class="prop-control">
-          <label htmlFor={name}>{name}</label>
-          <textarea class="input" id={name}>
+          <label htmlFor={name}>
+            {name} ({type})
+          </label>
+          <textarea rows={5} class="input" id={name} onInput={e => this.updatePropValue(e, propObject)}>
             {JSON5.stringify(value, undefined, 2)}
           </textarea>
-          ;
         </div>
       );
     }
@@ -205,8 +233,8 @@ export class DemoPlayground {
     return (
       <Host>
         <div class="container">
-          <div class="row demo-row">
-            <div class="col demo">
+          <div class="demo-row">
+            <div class="demo">
               <div class="demo-bg"></div>
               <div class="demo-content">
                 <slot></slot>
@@ -222,7 +250,7 @@ export class DemoPlayground {
             </div>
             <div
               class={{
-                'col-tablet-4 control-panel': true,
+                'control-panel': true,
                 'show': this.showConfigPanel,
               }}
             >
@@ -251,9 +279,42 @@ export class DemoPlayground {
               <div class="usage">
                 <go-accordion multiple>
                   <go-accordion-item heading="Output" active={true}>
-                    <pre>
-                      <code>{this.getUsage()}</code>
-                    </pre>
+                    <div class="output">
+                      <div class="output-controls">
+                        <go-button compact outline color="secondary" disabled={this.copied} onClick={() => this.copyUsage()}>
+                          {this.copied ? (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              viewBox="0 0 24 24"
+                            >
+                              <path d="M20 6 9 17l-5-5" />
+                            </svg>
+                          ) : (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              viewBox="0 0 24 24"
+                            >
+                              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                            </svg>
+                          )}
+                          <span>{this.copied ? 'Copied' : 'Copy'}</span>
+                        </go-button>
+                      </div>
+                      <pre>
+                        <code>{this.getUsage()}</code>
+                      </pre>
+                    </div>
                   </go-accordion-item>
                 </go-accordion>
               </div>

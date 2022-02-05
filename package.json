@@ -29,7 +29,8 @@
     "@go-ui/core": "^0.14.0",
     "@stencil/core": "^2.13.0",
     "copy-text-to-clipboard": "^3.0.1",
-    "json5": "^2.2.0"
+    "json5": "^2.2.0",
+    "prismjs": "^1.26.0"
   },
   "devDependencies": {
     "@stencil/postcss": "^2.1.0",
