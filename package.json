@@ -23,7 +23,9 @@
     "start": "stencil build --dev --watch --serve",
     "test": "stencil test --spec --e2e",
     "test.watch": "stencil test --spec --e2e --watchAll",
-    "generate": "stencil generate"
+    "generate": "stencil generate",
+    "predeploy": "npm run build && git add . && git commit -m \"Pre deploy cleanup\"",
+    "deploy": "npm version patch && npm publish"
   },
   "dependencies": {
     "@go-ui/core": "^0.14.0",

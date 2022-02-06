@@ -7,6 +7,7 @@
 
 | Property | Attribute | Description                                        | Type                | Default     |
 | -------- | --------- | -------------------------------------------------- | ------------------- | ----------- |
+| `block`  | `block`   |                                                    | `boolean`           | `false`     |
 | `props`  | `props`   |                                                    | `IProp[] \| string` | `undefined` |
 | `tag`    | `tag`     | query selector for the component to apply props to | `string`            | `null`      |
 
