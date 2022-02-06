@@ -34,8 +34,12 @@ export class DemoPlayground {
 
   loadedComponent: HTMLElement;
 
+  debug = false;
+
   log(...args: any[]) {
-    console.trace('[Demo Playground]', ...args);
+    if (this.debug) {
+      console.trace('[Demo Playground]', ...args);
+    }
   }
 
   componentWillLoad() {
@@ -87,7 +91,7 @@ export class DemoPlayground {
         }
         if (type === 'object' || type === 'array') {
           try {
-            return `${name}="${JSON5.stringify(value, undefined, 2)}"`;
+            return `${name}="${JSON5.stringify(value, undefined, 4)}"`;
           } catch (e) {
             return false;
           }
@@ -229,7 +233,6 @@ export class DemoPlayground {
   }
 
   render() {
-    let debug = false;
     return (
       <Host>
         <div class="container">
@@ -263,7 +266,7 @@ export class DemoPlayground {
                 </go-button>
               </div>
               <div class="props">
-                {debug ? <pre>{JSON5.stringify(this.propsArray, undefined, 2)}</pre> : null}
+                {this.debug ? <pre>{JSON5.stringify(this.propsArray, undefined, 2)}</pre> : null}
                 {this.propsArray.map(propObj => {
                   return (
                     <div class="prop" key={propObj.name}>

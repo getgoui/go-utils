@@ -23,7 +23,7 @@ export class DarkModeToggle {
     return (
       <Host>
         {/* dark mode toggle */}
-        <go-button class="dark-mode-toggle" icon color="secondary" flat round onClick={() => this.toggleDarkMode()}>
+        <go-button aria-label={`Switch to ${this.isDark ? 'light' : 'dark'} mode`} class="dark-mode-toggle" icon color="secondary" flat round onClick={() => this.toggleDarkMode()}>
           {this.isDark ? '🌞' : '🌙'}
         </go-button>
 
