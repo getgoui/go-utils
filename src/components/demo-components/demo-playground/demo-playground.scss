@@ -45,6 +45,11 @@ demo-playground {
     place-items: center;
     position: relative;
     min-height: var(--min-demo-content-height);
+    &.block {
+      display: block;
+      position: absolute;
+      top: 20%;
+    }
   }
 
   .control-panel {

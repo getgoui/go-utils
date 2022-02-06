@@ -34,6 +34,8 @@ export class DemoPlayground {
 
   loadedComponent: HTMLElement;
 
+  @Prop() block: boolean = false;
+
   debug = false;
 
   log(...args: any[]) {
@@ -233,13 +235,14 @@ export class DemoPlayground {
   }
 
   render() {
+    const { block } = this;
     return (
       <Host>
         <div class="container">
           <div class="demo-row">
             <div class="demo">
               <div class="demo-bg"></div>
-              <div class="demo-content">
+              <div class={{ 'demo-content': true, block }}>
                 <slot></slot>
               </div>
               {!this.showConfigPanel ? (
@@ -277,51 +280,47 @@ export class DemoPlayground {
               </div>
             </div>
           </div>
-          <div class="row">
-            <div class="col-tablet-12">
-              <div class="usage">
-                <go-accordion multiple>
-                  <go-accordion-item heading="Output" active={true}>
-                    <div class="output">
-                      <div class="output-controls">
-                        <go-button compact outline color="secondary" disabled={this.copied} onClick={() => this.copyUsage()}>
-                          {this.copied ? (
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              stroke="currentColor"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              viewBox="0 0 24 24"
-                            >
-                              <path d="M20 6 9 17l-5-5" />
-                            </svg>
-                          ) : (
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              stroke="currentColor"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              viewBox="0 0 24 24"
-                            >
-                              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                            </svg>
-                          )}
-                          <span>{this.copied ? 'Copied' : 'Copy'}</span>
-                        </go-button>
-                      </div>
-                      <pre>
-                        <code>{this.getUsage()}</code>
-                      </pre>
-                    </div>
-                  </go-accordion-item>
-                </go-accordion>
-              </div>
-            </div>
+          <div class="usage">
+            <go-accordion multiple>
+              <go-accordion-item heading="Output" active={true}>
+                <div class="output">
+                  <div class="output-controls">
+                    <go-button compact outline color="secondary" disabled={this.copied} onClick={() => this.copyUsage()}>
+                      {this.copied ? (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M20 6 9 17l-5-5" />
+                        </svg>
+                      ) : (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          viewBox="0 0 24 24"
+                        >
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                        </svg>
+                      )}
+                      <span>{this.copied ? 'Copied' : 'Copy'}</span>
+                    </go-button>
+                  </div>
+                  <pre>
+                    <code>{this.getUsage()}</code>
+                  </pre>
+                </div>
+              </go-accordion-item>
+            </go-accordion>
           </div>
         </div>
       </Host>

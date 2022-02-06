@@ -12,6 +12,7 @@ export namespace Components {
     interface DemoControls {
     }
     interface DemoPlayground {
+        "block": boolean;
         "props": IProp[] | string;
         /**
           * query selector for the component to apply props to
@@ -50,6 +51,7 @@ declare namespace LocalJSX {
     interface DemoControls {
     }
     interface DemoPlayground {
+        "block"?: boolean;
         "onLoaded"?: (event: CustomEvent<HTMLElement>) => void;
         "props"?: IProp[] | string;
         /**
