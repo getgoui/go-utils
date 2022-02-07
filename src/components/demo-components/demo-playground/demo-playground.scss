@@ -126,13 +126,13 @@ demo-playground {
       top: 8px;
       right: 8px;
     }
-    // pre {
-    //   code {
-    //     font-family: 'JetBrains Mono', monospace;
-    //     font-size: var(--go-size--1);
-    //     font-style: italic;
-    //   }
-    // }
+    pre {
+      code {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: var(--go-size-0);
+        font-style: italic;
+      }
+    }
   }
   .control-panel-opener {
     position: absolute;
