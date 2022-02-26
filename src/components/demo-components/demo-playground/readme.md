@@ -9,6 +9,7 @@
 | -------- | --------- | -------------------------------------------------- | ------------------- | ----------- |
 | `block`  | `block`   |                                                    | `boolean`           | `false`     |
 | `props`  | `props`   |                                                    | `IProp[] \| string` | `undefined` |
+| `slots`  | `slots`   |                                                    | `ISlot[] \| string` | `undefined` |
 | `tag`    | `tag`     | query selector for the component to apply props to | `string`            | `null`      |
 
 
