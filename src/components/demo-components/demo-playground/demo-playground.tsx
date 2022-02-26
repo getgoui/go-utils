@@ -10,6 +10,12 @@ export interface IProp {
   default: string | boolean | number;
   options?: string[] | { value: string | null; label: string }[];
 }
+
+export interface ISlot {
+  name: string;
+  docs?: string;
+  checked?: boolean;
+}
 @Component({
   tag: 'demo-playground',
   styleUrl: 'demo-playground.scss',
@@ -26,6 +32,10 @@ export class DemoPlayground {
   @Prop({ mutable: true }) props: IProp[] | string;
 
   @State() propsArray: IProp[] = [];
+
+  @Prop() slots: ISlot[] | string;
+
+  @State() slotsArray: ISlot[] = [];
 
   @Event({
     eventName: 'loaded',
@@ -46,9 +56,13 @@ export class DemoPlayground {
 
   componentWillLoad() {
     this.propsArray = typeof this.props === 'string' ? JSON5.parse(this.props) : this.props;
+    this.slotsArray = typeof this.slots === 'string' ? JSON5.parse(this.slots) : this.slots;
+    // console.log(this.el);
+    // this.getSlotContents();
   }
 
   private targetEl = null;
+  // @State() slotContents = {};
   componentDidLoad() {
     this.targetEl = this.el.querySelector(this.tag) as HTMLElement;
     if (!this.targetEl) {
@@ -56,21 +70,20 @@ export class DemoPlayground {
       return;
     }
 
-    this.applyProps();
+    this.handlePropsChange();
+    // this.handleSlotsChange();
 
-    this.log('loaded component ', this.targetEl, 'with props', this.propsArray);
     this.loadedEvent.emit(this.targetEl);
   }
 
   @Watch('propsArray')
-  propsArrayChanged() {
+  handlePropsChange() {
     if (!this.targetEl) {
       return;
     }
     // update target element with new props
     this.applyProps();
   }
-
   applyProps() {
     this.propsArray.forEach(({ name, value }) => {
       if (value === 'null' || value === null) {
@@ -80,6 +93,47 @@ export class DemoPlayground {
       this.targetEl[name] = value;
     });
   }
+
+  // watch slots array
+  // @Watch('slotsArray')
+  // handleSlotsChange() {
+  //   if (!this.targetEl) {
+  //     return;
+  //   }
+  //   // update target element with new slots
+  //   this.applySlots();
+  // }
+
+  // get original slot contents and remember them
+  // getSlotContents() {
+  //   const slots = this.targetEl.querySelectorAll('[slot]');
+  //   slots.forEach(slottedEl => {
+  //     const slotName = slottedEl.getAttribute('slot');
+  //     slottedEl.id = `${slotName}`;
+  //     this.slotContents = {
+  //       ...this.slotContents,
+  //       [slotName]: slottedEl,
+  //     };
+  //     slottedEl.remove();
+  //   });
+
+  //   console.log(this.slotContents);
+  // }
+
+  // applySlots() {
+  //   this.slotsArray.forEach(({ name, checked }) => {
+  //     if (!this.slotContents[name]) {
+  //       // no example slot provided.
+  //       return;
+  //     }
+  //     if (checked) {
+  //       console.log('add slot', name);
+  //       this.targetEl.appendChild(this.slotContents[name]);
+  //     } else {
+  //       this.slotContents[name].remove();
+  //     }
+  //   });
+  // }
 
   getUsage() {
     const glue = '\n  ';
@@ -225,6 +279,31 @@ export class DemoPlayground {
     );
   }
 
+  renderSlotControl(slotObject: ISlot) {
+    const { name, docs, checked } = slotObject;
+
+    return (
+      <div>
+        <input
+          type="checkbox"
+          id={name}
+          checked={checked}
+          onChange={e => {
+            this.slotsArray = this.slotsArray.map(s => {
+              if (s.name === name) {
+                s.checked = (e.target as HTMLInputElement).checked;
+              }
+              return s;
+            });
+          }}
+          aria-describedby={name + '_hint'}
+        />
+        <label htmlFor={name}>{name}</label>
+        <p id={name + '_hint'}>{docs}</p>
+      </div>
+    );
+  }
+
   @State() showConfigPanel = true;
 
   closeConfigPanel() {
@@ -246,11 +325,8 @@ export class DemoPlayground {
                 <slot></slot>
               </div>
               {!this.showConfigPanel ? (
-                <go-button round class={{ 'control-panel-opener': true }} color="tertiary" icon flat onClick={() => this.openConfigPanel()} aria-label="Open configuration panel">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="3" />
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                  </svg>
+                <go-button compact class={{ 'control-panel-opener': true }} color="primary" onClick={() => this.openConfigPanel()} aria-label="Open configuration panel">
+                  Configure
                 </go-button>
               ) : null}
             </div>
@@ -268,16 +344,28 @@ export class DemoPlayground {
                   </svg>
                 </go-button>
               </div>
-              <div class="props">
-                {this.debug ? <pre>{JSON5.stringify(this.propsArray, undefined, 2)}</pre> : null}
-                {this.propsArray.map(propObj => {
-                  return (
-                    <div class="prop" key={propObj.name}>
-                      <div>{this.renderPropControl(propObj)}</div>
-                    </div>
-                  );
-                })}
-              </div>
+              <go-accordion class="props" multiple={true}>
+                <go-accordion-item heading="Props" active>
+                  {this.debug ? <pre>{JSON5.stringify(this.propsArray, undefined, 2)}</pre> : null}
+                  {this.propsArray.map(propObj => {
+                    return (
+                      <div class="prop" key={propObj.name}>
+                        <div>{this.renderPropControl(propObj)}</div>
+                      </div>
+                    );
+                  })}
+                </go-accordion-item>
+                {/* <go-accordion-item heading="Slots" active>
+                  {this.debug ? <pre>{JSON5.stringify(this.slotsArray, undefined, 2)}</pre> : null}
+                  {this.slotsArray.map(slotObj => {
+                    return (
+                      <div class="slot" key={slotObj.name}>
+                        <div>{this.renderSlotControl(slotObj)}</div>
+                      </div>
+                    );
+                  })}
+                </go-accordion-item> */}
+              </go-accordion>
             </div>
           </div>
           <div class="usage">

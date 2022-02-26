@@ -12,8 +12,9 @@ demo-playground {
     margin-bottom: 1rem;
     position: relative;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     flex: 1;
+    gap: 1rem;
     @media (min-width: 768px) {
       flex-direction: row;
     }
@@ -39,6 +40,7 @@ demo-playground {
     background-size: $dot-space $dot-space;
   }
   .demo-content {
+    padding-top: 4rem;
     width: 100%;
     height: 100%;
     display: grid;
@@ -66,7 +68,6 @@ demo-playground {
     @media (min-width: 768px) {
       width: 0;
       transform: scaleX(0) translateX(100%);
-      max-height: var(--max-demo-control-panel-height);
     }
     &.show {
       opacity: 1;
@@ -77,6 +78,7 @@ demo-playground {
       @media (min-width: 768px) {
         transform: translateX(0);
         width: 37%;
+        max-height: none;
       }
     }
   }

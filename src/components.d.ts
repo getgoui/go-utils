@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { IProp } from "./components/demo-components/demo-playground/demo-playground";
+import { IProp, ISlot } from "./components/demo-components/demo-playground/demo-playground";
 export namespace Components {
     interface DarkModeToggle {
     }
@@ -14,6 +14,7 @@ export namespace Components {
     interface DemoPlayground {
         "block": boolean;
         "props": IProp[] | string;
+        "slots": ISlot[] | string;
         /**
           * query selector for the component to apply props to
          */
@@ -54,6 +55,7 @@ declare namespace LocalJSX {
         "block"?: boolean;
         "onLoaded"?: (event: CustomEvent<HTMLElement>) => void;
         "props"?: IProp[] | string;
+        "slots"?: ISlot[] | string;
         /**
           * query selector for the component to apply props to
          */
