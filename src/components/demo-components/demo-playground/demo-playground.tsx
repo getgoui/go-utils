@@ -366,6 +366,7 @@ export class DemoPlayground {
                   })}
                 </go-accordion-item> */}
               </go-accordion>
+              <slot name="controls" />
             </div>
           </div>
           <div class="usage">
