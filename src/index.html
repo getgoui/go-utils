@@ -23,7 +23,6 @@
       {
         'name': 'custom-title',
         'docs': 'Slot for custom card title',
-        'checked': false
       },
       {
         'name': 'default',
@@ -36,18 +35,20 @@
       {
         'name': 'media',
         'docs': 'Slot for media markup for media card',
-        'checked': true
       },
       {
         'name': 'pre-title',
         'docs': 'Slot for content above the card title'
       }
       ]"
-      code="<div class='container'>
+      code="
+      <script>alert('yo')</script>
+      <div class='container'>
         <go-card card-title='Card' card-subtitle='I am normal card' media-position='left'>
+          Hello world
           <img src='https://images.unsplash.com/photo-1512568400610-62da28bc8a13?auto=format&fit=crop&w=600&h=600&q=80' alt='Photo' slot='media' />
-          <div slot='custom-title'>
-            <h3>Custom title</h3>
+          <div slot='footer'>
+            <h3>Custom footer</h3>
             <hr />
             😆😆😆
           </div>

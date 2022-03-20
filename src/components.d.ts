@@ -7,7 +7,7 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { IProp, ISlot } from "./components/demo-components/demo-playground/demo-playground";
 import { IProp as IProp1 } from "./components/demo-components/demo-playground/prop.type";
-import { ISlot as ISlot1 } from "./components/demo-components/demo-playground/wc-playground";
+import { ISlot as ISlot1 } from "./components/demo-components/demo-playground/slot.type";
 export namespace Components {
     interface DarkModeToggle {
     }
@@ -25,6 +25,10 @@ export namespace Components {
     interface PropsPanel {
         "debug": boolean;
         "values": IProp[];
+    }
+    interface SlotsPanel {
+        "debug": boolean;
+        "values": ISlot[];
     }
     interface WcOutput {
         "usage": string;
@@ -65,6 +69,12 @@ declare global {
         prototype: HTMLPropsPanelElement;
         new (): HTMLPropsPanelElement;
     };
+    interface HTMLSlotsPanelElement extends Components.SlotsPanel, HTMLStencilElement {
+    }
+    var HTMLSlotsPanelElement: {
+        prototype: HTMLSlotsPanelElement;
+        new (): HTMLSlotsPanelElement;
+    };
     interface HTMLWcOutputElement extends Components.WcOutput, HTMLStencilElement {
     }
     var HTMLWcOutputElement: {
@@ -82,6 +92,7 @@ declare global {
         "demo-controls": HTMLDemoControlsElement;
         "demo-playground": HTMLDemoPlaygroundElement;
         "props-panel": HTMLPropsPanelElement;
+        "slots-panel": HTMLSlotsPanelElement;
         "wc-output": HTMLWcOutputElement;
         "wc-playground": HTMLWcPlaygroundElement;
     }
@@ -106,6 +117,11 @@ declare namespace LocalJSX {
         "onPropChange"?: (event: CustomEvent<IProp[]>) => void;
         "values"?: IProp[];
     }
+    interface SlotsPanel {
+        "debug"?: boolean;
+        "onSlotDisplayChange"?: (event: CustomEvent<ISlot[]>) => void;
+        "values"?: ISlot[];
+    }
     interface WcOutput {
         "onCopy"?: (event: CustomEvent<any>) => void;
         "usage"?: string;
@@ -126,6 +142,7 @@ declare namespace LocalJSX {
         "demo-controls": DemoControls;
         "demo-playground": DemoPlayground;
         "props-panel": PropsPanel;
+        "slots-panel": SlotsPanel;
         "wc-output": WcOutput;
         "wc-playground": WcPlayground;
     }
@@ -138,6 +155,7 @@ declare module "@stencil/core" {
             "demo-controls": LocalJSX.DemoControls & JSXBase.HTMLAttributes<HTMLDemoControlsElement>;
             "demo-playground": LocalJSX.DemoPlayground & JSXBase.HTMLAttributes<HTMLDemoPlaygroundElement>;
             "props-panel": LocalJSX.PropsPanel & JSXBase.HTMLAttributes<HTMLPropsPanelElement>;
+            "slots-panel": LocalJSX.SlotsPanel & JSXBase.HTMLAttributes<HTMLSlotsPanelElement>;
             "wc-output": LocalJSX.WcOutput & JSXBase.HTMLAttributes<HTMLWcOutputElement>;
             "wc-playground": LocalJSX.WcPlayground & JSXBase.HTMLAttributes<HTMLWcPlaygroundElement>;
         }

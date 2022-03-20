@@ -1,15 +1,10 @@
-import { WcOutput } from './wc-output';
 import { Component, Host, h, Element, Prop, Event, EventEmitter, State } from '@stencil/core';
 import JSON5 from 'json5';
 import copy from 'copy-text-to-clipboard';
 import kebabCase from 'lodash.kebabcase';
 import { IProp } from './prop.type';
+import { ISlot } from './slot.type';
 
-export interface ISlot {
-  name: string;
-  docs?: string;
-  checked?: boolean;
-}
 @Component({
   tag: 'wc-playground',
   styleUrl: 'wc-playground.scss',
@@ -42,7 +37,7 @@ export class WcPlayground {
 
   @Prop() block: boolean = false;
 
-  debug = false;
+  debug = true;
 
   log(...args: any[]) {
     if (this.debug) {
@@ -55,16 +50,16 @@ export class WcPlayground {
     this.slotsArray = typeof this.slots === 'string' ? JSON5.parse(this.slots) : this.slots;
   }
 
-  private targetEl: HTMLElement = null;
+  @State() targetEl: HTMLElement = null;
   componentDidLoad() {
-    this.initiateDOM();
+    this.refreshDemoContent(true);
     this.loadedEvent.emit(this.targetEl);
   }
   /**
    * initialise demo content with some DOM magic
    */
   demoContentEl: HTMLElement;
-  initiateDOM() {
+  refreshDemoContent(extractValuesFromCode = false) {
     const { tag } = this;
 
     this.demoContentEl = this.el.querySelector('#demo-content');
@@ -76,15 +71,20 @@ export class WcPlayground {
       console.error('[WebComponent Playground] Target element not found');
       return;
     }
+    if (!extractValuesFromCode) {
+      this.targetEl.outerHTML = this.getUsage();
+    }
 
     // apply props to target element
-    this.propsArray = this.propsArray.map(prop => {
-      const attribute = prop.attr ? prop.attr : kebabCase(prop.name);
-      return {
-        ...prop,
-        value: this.targetEl.getAttribute(attribute),
-      };
-    });
+    if (extractValuesFromCode) {
+      this.propsArray = this.propsArray.map(prop => {
+        const attribute = prop.attr ? prop.attr : kebabCase(prop.name);
+        return {
+          ...prop,
+          value: this.targetEl.getAttribute(attribute),
+        };
+      });
+    }
 
     const patternTagStart = `<${tag}(.*)>`;
     const patternTagEnd = `</${tag}>`;
@@ -101,10 +101,37 @@ export class WcPlayground {
       .replace(new RegExp(patternTagEnd, 'gi'), '')
       .trim();
 
-    const tempSlotsHolder = document.createElement('template');
+    const tempSlotsHolder = document.createElement('div');
     tempSlotsHolder.innerHTML = innerString;
     // show/hide options for slots
-    console.log(tempSlotsHolder);
+    let tempSlotArray = [...this.slotsArray];
+    tempSlotArray = this.slotsArray.map((slot: ISlot) => {
+      const slotEl = tempSlotsHolder.querySelector(`[slot="${slot.name}"]`) as HTMLElement;
+      if (slotEl) {
+        tempSlotsHolder.removeChild(slotEl);
+        return {
+          ...slot,
+          show: true,
+          content: slotEl.outerHTML,
+        };
+      }
+      return slot;
+    });
+    // if tempslotsholder is not empty, its innerHtml gets set to the default slot.
+    if (tempSlotsHolder.innerHTML.trim()) {
+      tempSlotArray = tempSlotArray.map(slot => {
+        if (slot.name === 'default') {
+          return {
+            ...slot,
+            show: true,
+            content: tempSlotsHolder.innerHTML,
+          };
+        }
+
+        return slot;
+      });
+    }
+    this.slotsArray = tempSlotArray;
   }
 
   getUsage() {
@@ -133,10 +160,22 @@ export class WcPlayground {
       })
       .filter(Boolean);
 
+    const slotOutputs = this.slotsArray
+      .map(({ show, content }) => {
+        if (!show) {
+          return false;
+        }
+        if (!content) {
+          return false;
+        }
+        return content;
+      })
+      .filter(Boolean);
+
     const tagName = this.tag;
-    return `<${tagName}${propOutputs.length ? glue : ''}${propOutputs.join(glue)}${
-      propOutputs.length ? glue : ''
-    }></${tagName}>`;
+    return `<${tagName}${propOutputs.length ? glue : ''}${propOutputs.join(glue)}${propOutputs.length ? glue : ''}>
+  ${slotOutputs.length ? slotOutputs.join('\n  ') : ''}
+</${tagName}>`;
   }
 
   copyUsage() {
@@ -157,6 +196,7 @@ export class WcPlayground {
    * @param e propChange custom event from props-panel
    */
   handlePropsChange(e: CustomEvent<IProp[]>) {
+    console.log(this.targetEl);
     if (!this.targetEl) {
       return;
     }
@@ -172,6 +212,21 @@ export class WcPlayground {
       }
       this.targetEl[name] = value;
     });
+  }
+
+  // handle slot changes
+  handleSlotsChange(e: CustomEvent<ISlot[]>) {
+    if (!this.targetEl) {
+      return;
+    }
+    this.slotsArray = e.detail;
+    this.applySlots();
+  }
+  applySlots() {
+    if (!this.targetEl) {
+      return;
+    }
+    this.refreshDemoContent();
   }
 
   render() {
@@ -234,6 +289,13 @@ export class WcPlayground {
                     values={this.propsArray}
                     onPropChange={e => this.handlePropsChange(e)}
                   ></props-panel>
+                </go-accordion-item>
+                <go-accordion-item heading="Slots" active>
+                  <slots-panel
+                    debug={debug}
+                    values={this.slotsArray}
+                    onSlotDisplayChange={e => this.handleSlotsChange(e)}
+                  ></slots-panel>
                 </go-accordion-item>
               </go-accordion>
               <slot name="controls" />
