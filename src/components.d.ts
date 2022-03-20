@@ -6,6 +6,8 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { IProp, ISlot } from "./components/demo-components/demo-playground/demo-playground";
+import { IProp as IProp1 } from "./components/demo-components/demo-playground/prop.type";
+import { ISlot as ISlot1 } from "./components/demo-components/demo-playground/wc-playground";
 export namespace Components {
     interface DarkModeToggle {
     }
@@ -13,6 +15,23 @@ export namespace Components {
     }
     interface DemoPlayground {
         "block": boolean;
+        "props": IProp[] | string;
+        "slots": ISlot[] | string;
+        /**
+          * query selector for the component to apply props to
+         */
+        "tag": string;
+    }
+    interface PropsPanel {
+        "debug": boolean;
+        "values": IProp[];
+    }
+    interface WcOutput {
+        "usage": string;
+    }
+    interface WcPlayground {
+        "block": boolean;
+        "code": string;
         "props": IProp[] | string;
         "slots": ISlot[] | string;
         /**
@@ -40,10 +59,31 @@ declare global {
         prototype: HTMLDemoPlaygroundElement;
         new (): HTMLDemoPlaygroundElement;
     };
+    interface HTMLPropsPanelElement extends Components.PropsPanel, HTMLStencilElement {
+    }
+    var HTMLPropsPanelElement: {
+        prototype: HTMLPropsPanelElement;
+        new (): HTMLPropsPanelElement;
+    };
+    interface HTMLWcOutputElement extends Components.WcOutput, HTMLStencilElement {
+    }
+    var HTMLWcOutputElement: {
+        prototype: HTMLWcOutputElement;
+        new (): HTMLWcOutputElement;
+    };
+    interface HTMLWcPlaygroundElement extends Components.WcPlayground, HTMLStencilElement {
+    }
+    var HTMLWcPlaygroundElement: {
+        prototype: HTMLWcPlaygroundElement;
+        new (): HTMLWcPlaygroundElement;
+    };
     interface HTMLElementTagNameMap {
         "dark-mode-toggle": HTMLDarkModeToggleElement;
         "demo-controls": HTMLDemoControlsElement;
         "demo-playground": HTMLDemoPlaygroundElement;
+        "props-panel": HTMLPropsPanelElement;
+        "wc-output": HTMLWcOutputElement;
+        "wc-playground": HTMLWcPlaygroundElement;
     }
 }
 declare namespace LocalJSX {
@@ -61,10 +101,33 @@ declare namespace LocalJSX {
          */
         "tag"?: string;
     }
+    interface PropsPanel {
+        "debug"?: boolean;
+        "onPropChange"?: (event: CustomEvent<IProp[]>) => void;
+        "values"?: IProp[];
+    }
+    interface WcOutput {
+        "onCopy"?: (event: CustomEvent<any>) => void;
+        "usage"?: string;
+    }
+    interface WcPlayground {
+        "block"?: boolean;
+        "code"?: string;
+        "onLoaded"?: (event: CustomEvent<HTMLElement>) => void;
+        "props"?: IProp[] | string;
+        "slots"?: ISlot[] | string;
+        /**
+          * query selector for the component to apply props to
+         */
+        "tag"?: string;
+    }
     interface IntrinsicElements {
         "dark-mode-toggle": DarkModeToggle;
         "demo-controls": DemoControls;
         "demo-playground": DemoPlayground;
+        "props-panel": PropsPanel;
+        "wc-output": WcOutput;
+        "wc-playground": WcPlayground;
     }
 }
 export { LocalJSX as JSX };
@@ -74,6 +137,9 @@ declare module "@stencil/core" {
             "dark-mode-toggle": LocalJSX.DarkModeToggle & JSXBase.HTMLAttributes<HTMLDarkModeToggleElement>;
             "demo-controls": LocalJSX.DemoControls & JSXBase.HTMLAttributes<HTMLDemoControlsElement>;
             "demo-playground": LocalJSX.DemoPlayground & JSXBase.HTMLAttributes<HTMLDemoPlaygroundElement>;
+            "props-panel": LocalJSX.PropsPanel & JSXBase.HTMLAttributes<HTMLPropsPanelElement>;
+            "wc-output": LocalJSX.WcOutput & JSXBase.HTMLAttributes<HTMLWcOutputElement>;
+            "wc-playground": LocalJSX.WcPlayground & JSXBase.HTMLAttributes<HTMLWcPlaygroundElement>;
         }
     }
 }
