@@ -19,8 +19,18 @@ export class SlotsPanel {
     const controlId = `slot-${name}-control`;
     return (
       <div class="slot-control">
-        <input type="checkbox" name={name} id={controlId} checked={show} onChange={e => this.updateSlotValue(e)} />
+        <input
+          type="checkbox"
+          name={name}
+          id={controlId}
+          checked={show}
+          onChange={e => this.updateSlotValue(e)}
+          style={{ marginRight: '0.5rem' }}
+        />
         <label htmlFor={controlId}>{name}</label>
+        <div>
+          <small>{slotObj.docs}</small>
+        </div>
       </div>
     );
   }
