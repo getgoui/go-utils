@@ -2,8 +2,9 @@
 
 wc-playground {
   --min-demo-content-height: 400px;
-  --max-demo-control-panel-height: 400px;
+  --max-demo-control-panel-height: 800px;
   --demo-bg-line-color: var(--go-color-text);
+  --demo-content-padding: 4rem 2rem;
   display: block;
   .demo-row {
     overflow: hidden;
@@ -40,7 +41,7 @@ wc-playground {
     background-size: $dot-space $dot-space;
   }
   .demo-content {
-    padding-top: 4rem;
+    padding: var(--demo-content-padding);
     width: 100%;
     height: 100%;
     display: grid;
