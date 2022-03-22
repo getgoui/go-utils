@@ -37,7 +37,7 @@ export class WcPlayground {
 
   @Prop() block: boolean = false;
 
-  debug = true;
+  debug = false;
 
   log(...args: any[]) {
     if (this.debug) {
@@ -45,54 +45,48 @@ export class WcPlayground {
     }
   }
 
+  @State() renderedComponent: string = '';
+
   componentWillLoad() {
+    this.initiateData();
+    this.renderedComponent = this.getUsage();
+  }
+
+  initiateData() {
     this.propsArray = typeof this.props === 'string' ? JSON5.parse(this.props) : this.props;
     this.slotsArray = typeof this.slots === 'string' ? JSON5.parse(this.slots) : this.slots;
-  }
 
-  @State() targetEl: HTMLElement = null;
-  componentDidLoad() {
-    this.refreshDemoContent(true);
-    this.loadedEvent.emit(this.targetEl);
-  }
-  /**
-   * initialise demo content with some DOM magic
-   */
-  demoContentEl: HTMLElement;
-  refreshDemoContent(extractValuesFromCode = false) {
-    const { tag } = this;
+    // extract props from code
+    const tempPropsHolder = document.createElement('div');
 
-    this.demoContentEl = this.el.querySelector('#demo-content');
     // parse the code prop and store the initial html for slot usage rendering
-    this.demoContentEl.innerHTML = this.code;
+    tempPropsHolder.innerHTML = this.code;
 
-    this.targetEl = this.demoContentEl.querySelector(this.tag) as HTMLElement;
-    if (!this.targetEl) {
-      console.error('[WebComponent Playground] Target element not found');
+    const { tag } = this;
+    const tempEl = tempPropsHolder.querySelector(tag) as HTMLElement;
+    if (!tempEl) {
+      console.error('[WebComponent Playground] Target element ' + tag + ' not found');
       return;
-    }
-    if (!extractValuesFromCode) {
-      this.targetEl.outerHTML = this.getUsage();
     }
 
     // apply props to target element
-    if (extractValuesFromCode) {
-      this.propsArray = this.propsArray.map(prop => {
-        const attribute = prop.attr ? prop.attr : kebabCase(prop.name);
-        return {
-          ...prop,
-          value: this.targetEl.getAttribute(attribute),
-        };
-      });
-    }
+    this.propsArray = this.propsArray.map(prop => {
+      const attribute = prop.attr ? prop.attr : kebabCase(prop.name);
+      return {
+        ...prop,
+        value: tempEl.getAttribute(attribute),
+      };
+    });
+    tempPropsHolder.remove();
 
+    // initialise slots
     const patternTagStart = `<${tag}(.*)>`;
     const patternTagEnd = `</${tag}>`;
     const pattern = `${patternTagStart}(.|\n)*?${patternTagEnd}`;
 
     const matches = this.code.match(new RegExp(pattern, 'gi'));
     if (!matches) {
-      console.error('[WebComponent Playground] Tag not found in code');
+      console.error('[WebComponent Playground] Tag ' + tag + ' not found in code');
       return;
     }
     const outerString = matches[0];
@@ -112,7 +106,7 @@ export class WcPlayground {
         return {
           ...slot,
           show: true,
-          content: slotEl.outerHTML,
+          content: slotEl,
         };
       }
       return slot;
@@ -132,15 +126,12 @@ export class WcPlayground {
       });
     }
     this.slotsArray = tempSlotArray;
+    tempSlotsHolder.remove();
   }
 
-  getUsage() {
-    if (!this.targetEl) {
-      return '';
-    }
-
-    const glue = '\n  ';
-    const propOutputs = this.propsArray
+  // turn props array to key:value object
+  getPropsObject(propsArray) {
+    const filteredArray = propsArray
       .map(({ name, attr, value, type }) => {
         const attribute = attr ? attr : kebabCase(name);
         if (value === 'null' || value === null) {
@@ -156,21 +147,35 @@ export class WcPlayground {
             return false;
           }
         }
-        return `${attribute}="${value}"`;
+        return { [attribute]: value }; // `${attribute}="${value}"`;
       })
       .filter(Boolean);
 
-    const slotOutputs = this.slotsArray
-      .map(({ show, content }) => {
+    return filteredArray.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+  }
+
+  getSlotContents(slotsArray): string[] {
+    return slotsArray
+      .map(({ name, show, content }) => {
         if (!show) {
           return false;
         }
         if (!content) {
           return false;
         }
-        return content;
+        return name === 'default' ? content : content.outerHTML;
       })
       .filter(Boolean);
+  }
+
+  getUsage() {
+    const glue = '\n  ';
+    const propObject = this.getPropsObject(this.propsArray);
+    const propOutputs = Object.entries(propObject).map(([key, value]) => {
+      return `${key}="${value}"`;
+    });
+
+    const slotOutputs = this.getSlotContents(this.slotsArray);
 
     const tagName = this.tag;
     return `<${tagName}${propOutputs.length ? glue : ''}${propOutputs.join(glue)}${propOutputs.length ? glue : ''}>
@@ -196,50 +201,26 @@ export class WcPlayground {
    * @param e propChange custom event from props-panel
    */
   handlePropsChange(e: CustomEvent<IProp[]>) {
-    console.log(this.targetEl);
-    if (!this.targetEl) {
-      return;
-    }
     // update target element with new props
-    this.propsArray = e.detail;
-    this.applyProps();
-  }
-  applyProps() {
-    this.propsArray.forEach(({ name, value }) => {
-      if (value === 'null' || value === null) {
-        this.targetEl.removeAttribute(name);
-        return;
-      }
-      this.targetEl[name] = value;
-    });
+    this.propsArray = [...e.detail];
+    this.renderedComponent = this.getUsage();
   }
 
   // handle slot changes
   handleSlotsChange(e: CustomEvent<ISlot[]>) {
-    if (!this.targetEl) {
-      return;
-    }
-    this.slotsArray = e.detail;
-    this.applySlots();
-  }
-  applySlots() {
-    if (!this.targetEl) {
-      return;
-    }
-    this.refreshDemoContent();
+    this.slotsArray = [...e.detail];
+    this.renderedComponent = this.getUsage();
   }
 
   render() {
-    const { block, debug } = this;
+    const { block, debug, renderedComponent } = this;
     return (
       <Host>
         <div class="container">
           <div class="demo-row">
             <div class="demo">
               <div class="demo-bg"></div>
-              <div id="demo-content" class={{ 'demo-content': true, block }}>
-                <slot></slot>
-              </div>
+              <div id="demo-content" class={{ 'demo-content': true, block }} innerHTML={renderedComponent}></div>
               {!this.showConfigPanel ? (
                 <go-button
                   compact
