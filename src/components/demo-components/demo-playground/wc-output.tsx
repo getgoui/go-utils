@@ -6,27 +6,27 @@ import { Component, Event, EventEmitter, h, Prop, State } from '@stencil/core';
 export class WcOutput {
   @Prop() usage: string = '';
 
-  @State() copied: boolean = false;
+  @State() textCopied: boolean = false;
 
-  @Event() copy: EventEmitter<any>;
+  @Event() copied: EventEmitter<any>;
   copyClick() {
-    this.copy.emit();
-    this.copied = true;
+    this.copied.emit();
+    this.textCopied = true;
     setTimeout(() => {
-      this.copied = false;
+      this.textCopied = false;
     }, 2000);
   }
 
   render() {
-    const { copied, usage } = this;
+    const { textCopied, usage } = this;
     return (
       <div class="usage">
         <go-accordion multiple>
           <go-accordion-item heading="Usage">
             <div class="output">
               <div class="output-controls">
-                <go-button compact outline color="secondary" disabled={copied} onClick={() => this.copyClick()}>
-                  {copied ? (
+                <go-button compact outline color="secondary" disabled={textCopied} onClick={() => this.copyClick()}>
+                  {textCopied ? (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -52,7 +52,7 @@ export class WcOutput {
                       <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                     </svg>
                   )}
-                  <span>{copied ? 'Copied' : 'Copy'}</span>
+                  <span>{textCopied ? 'Copied' : 'Copy'}</span>
                 </go-button>
               </div>
               <pre>
