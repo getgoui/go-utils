@@ -1,5 +1,5 @@
 {
-  "name": "go-ui-demo-utils",
+  "name": "@go-ui/utils",
   "version": "0.5.6",
   "description": "Utility components for Go UI document site",
   "main": "dist/index.cjs.js",
@@ -17,15 +17,15 @@
   "files": [
     "dist/"
   ],
-  "homepage": "https://go.components.style/",
+  "homepage": "https://go-ui.com/",
   "scripts": {
     "build": "stencil build --docs",
     "start": "stencil build --dev --watch --serve",
     "test": "stencil test --spec --e2e",
     "test.watch": "stencil test --spec --e2e --watchAll",
     "generate": "stencil generate",
-    "predeploy": "npm run build && git add . && git commit -m \"Pre deploy cleanup\"",
-    "deploy": "npm version patch && npm publish"
+    "predeploy": "pnpm run build && git add . && git commit -m \"Pre deploy cleanup\"",
+    "deploy": "npm version patch && npm publish --access public"
   },
   "dependencies": {
     "@go-ui/core": "^0.24.0",
