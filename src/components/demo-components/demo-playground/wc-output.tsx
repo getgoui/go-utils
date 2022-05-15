@@ -8,9 +8,9 @@ export class WcOutput {
 
   @State() textCopied: boolean = false;
 
-  @Event() copied: EventEmitter<any>;
+  @Event() copy: EventEmitter<any>;
   copyClick() {
-    this.copied.emit();
+    this.copy.emit();
     this.textCopied = true;
     setTimeout(() => {
       this.textCopied = false;
@@ -25,7 +25,7 @@ export class WcOutput {
           <go-accordion-item heading="Usage">
             <div class="output">
               <div class="output-controls">
-                <go-button compact outline color="secondary" disabled={textCopied} onClick={() => this.copyClick()}>
+                <go-button compact outlineFill disabled={textCopied} onClick={() => this.copyClick()}>
                   {textCopied ? (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

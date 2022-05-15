@@ -1,7 +1,30 @@
 demo-controls {
   display: block;
   position: fixed;
-  bottom: 1rem;
-  right: 1rem;
+  top: 50%;
+  right: 0;
   z-index: var(--layer-important);
+}
+
+#demo-control-btn {
+  box-shadow: var(--shadow-3);
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.demo-control-drawer {
+  padding: var(--go-size-1);
+  .demo-control-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--go-color-neutral-200);
+    position: sticky;
+    top: 0;
+    padding-bottom: 1rem;
+  }
+  .demo-control-content {
+    padding-top: 1rem;
+    overflow: auto;
+  }
 }

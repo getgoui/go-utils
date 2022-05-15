@@ -37,12 +37,11 @@ export class DarkModeToggle {
       <Host>
         {/* dark mode toggle */}
         <go-button
-          aria-label={`Switch to ${this.isDark ? 'light' : 'dark'} mode`}
           class={{ 'dark-mode-toggle': true, 'is-dark': this.isDark }}
-          icon
-          color="secondary"
+          color={this.isDark ? 'secondary' : 'primary'}
           flat
           round
+          block="all"
           onClick={() => this.toggleDarkMode()}
         >
           <svg
@@ -63,9 +62,8 @@ export class DarkModeToggle {
               ]
             )}
           </svg>
+          {`Switch to ${this.isDark ? 'light' : 'dark'} mode`}
         </go-button>
-
-        {/* component usage code here */}
       </Host>
     );
   }
