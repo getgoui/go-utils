@@ -282,7 +282,7 @@ export class WcPlayground {
               <slot name="controls" />
             </div>
           </div>
-          <wc-output onCopy={() => this.copyUsage()} usage={this.getUsage()} />
+          <wc-output onCopyCode={() => this.copyUsage()} usage={this.getUsage()}></wc-output>
         </div>
       </Host>
     );

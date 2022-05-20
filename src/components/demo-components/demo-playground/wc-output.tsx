@@ -8,9 +8,9 @@ export class WcOutput {
 
   @State() textCopied: boolean = false;
 
-  @Event() copy: EventEmitter<any>;
+  @Event() copyCode: EventEmitter<any>;
   copyClick() {
-    this.copy.emit();
+    this.copyCode.emit();
     this.textCopied = true;
     setTimeout(() => {
       this.textCopied = false;

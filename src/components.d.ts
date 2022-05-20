@@ -96,7 +96,7 @@ declare namespace LocalJSX {
         "values"?: ISlot[];
     }
     interface WcOutput {
-        "onCopy"?: (event: CustomEvent<any>) => void;
+        "onCopyCode"?: (event: CustomEvent<any>) => void;
         "usage"?: string;
     }
     interface WcPlayground {
