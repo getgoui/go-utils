@@ -10,7 +10,6 @@
 ### Depends on
 
 - go-button
-- go-tooltip
 - go-nav-drawer
 - [dark-mode-toggle](.)
 
@@ -18,7 +17,6 @@
 ```mermaid
 graph TD;
   demo-controls --> go-button
-  demo-controls --> go-tooltip
   demo-controls --> go-nav-drawer
   demo-controls --> dark-mode-toggle
   go-nav-drawer --> go-button
